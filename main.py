@@ -2,20 +2,20 @@ import threading
 from threading import*
 import time
 
-d={} 
+key_data={} 
 
 def create(key,value,timeout=0):
-    if key in d:
+    if key in key_data:
         print("error: key exists") 
     else:
         if(key.isalpha()):
-            if len(d)<(1073741824) and value<=(16777216):
+            if len(key_data)<(1073741824) and value<=(16777216):
                 if timeout==0:
                     l=[value,timeout]
                 else:
                     l=[value,time.time()+timeout]
                 if len(key)<=32: 
-                    d[key]=l
+                    key_data[key]=l
             else:
                 print("error: Memory limit exceeded!! ")
         else:
@@ -23,10 +23,10 @@ def create(key,value,timeout=0):
 
             
 def read(key):
-    if key not in d:
+    if key not in key_data:
         print("error: key does not exist") 
     else:
-        b=d[key]
+        b=key_data[key]
         if b[1]!=0:
             if time.time()<b[1]: 
                 stri=str(key)+":"+str(b[0]) 
@@ -39,39 +39,39 @@ def read(key):
 
 
 def delete(key):
-    if key not in d:
+    if key not in key_data:
         print("error: given key does not exist") 
     else:
-        b=d[key]
+        b=key_data[key]
         if b[1]!=0:
             if time.time()<b[1]: 
-                del d[key]
+                del key_data[key]
                 print("successfully deleted")
             else:
                 print("error: time-to-live of",key,"has expired")
         else:
-            del d[key]
+            del key_data[key]
             print("successfully deleted")
 
 
 def modify(key,value):
-    b=d[key]
+    b=key_data[key]
     if b[1]!=0:
         if time.time()<b[1]:
-            if key not in d:
+            if key not in key_data:
                 print("error: given key does not exist") 
             else:
                 l=[]
                 l.append(value)
                 l.append(b[1])
-                d[key]=l
+                key_data[key]=l
         else:
             print("error: time-to-live of",key,"has expired") 
     else:
-        if key not in d:
+        if key not in key_data:
             print("error: given key does not exist") 
         else:
             l=[]
             l.append(value)
             l.append(b[1])
-            d[key]=l
+            key_data[key]=l
